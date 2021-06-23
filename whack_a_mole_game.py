@@ -14,7 +14,7 @@ class WhackAMole:
     STATUS_BACKGROUND = "white"
     NUM_MASHES_ACROSS = 4
     MIN_TIME_DOWN = 1000
-    MAX_TIME_DONW = 5000
+    MAX_TIME_DOWN = 5000
     MIN_TIME_UP = 1000
     MAX_TIME_UP = 3000
     
@@ -25,10 +25,10 @@ class WhackAMole:
         self.mash_frame, self.status_frame = self.create_frames()
 
         self.mash_photo = PhotoImage(file="mash.png")
-        self.mole_cover_photo = PhotoImage(file="mash.png")
+        self.mash_cover_photo = PhotoImage(file="mash_cover.png")
         self.label_timers = {}
 
-        self.mash_buttons = self.create_mashes()
+        self.mash_labels = self.create_mashes()
 
         self.hit_counter, self.miss_counter, self.start_button, self.quit_button = self.create_status_widgets()
 
@@ -101,7 +101,7 @@ class WhackAMole:
         # Set the same callback for each mash button
         for i in range(WhackAMole.NUM_MASHES_ACROSS):
             for e in range(WhackAMole.NUM_MASHES_ACROSS):
-                self.mash_buttons[i][e].bind("<ButtonPress-1>", self.mash_hit)
+                self.mash_labels[i][e].bind("<ButtonPress-1>", self.mash_hit)
 
         self.start_button["command"] = self.start
         self.quit_button["command"] = self.quit
@@ -110,7 +110,7 @@ class WhackAMole:
     def mash_hit(self, event):
         if self.game_is_running:
             hit_label = event.widget
-            if hit_label["image"] == self.mole_cover_photo.name:
+            if hit_label["image"] == self.mash_cover_photo.name:
                 # MISSED! update the miss counter
                 self.miss_counter["text"] = str(int(self.miss_counter["text"]) + 1)
             else:
@@ -121,14 +121,17 @@ class WhackAMole:
 
     def start(self):
         if self.start_button["text"] == "Start":
-            # Change all the mashes images to blank image and
-            # set a random time for the mashes to re-appear on each label.
             for i in range(WhackAMole.NUM_MASHES_ACROSS):
                 for e in range(WhackAMole.NUM_MASHES_ACROSS):
                     the_label = self.mash_labels[i][e]
+            # Change all the mashes images to blank image and
+            # set a random time for the mashes to re-appear on each label.
+
+
+
                     the_label["image"] = self.mash_cover_photo
                     time_down = randint(WhackAMole.MIN_TIME_DOWN,
-                                        WhackAMole.MAX_TIME_DONW)
+                                        WhackAMole.MAX_TIME_DOWN)
                     timer_object = the_label.after(time_down,
                                                    self.pop_up_mash, the_label)
                     self.label_timers[id(the_label)] = timer_object
@@ -142,11 +145,11 @@ class WhackAMole:
         else: # The game is running, so stop the game and reset everything
             # Show every mash and stop all the timers
             for i in range(WhackAMole.NUM_MASHES_ACROSS):
-                for e in range(WhackAMole.NUM_CRASHES_ACROSS):
-                    the_label = self.mole_labels[i][e]
+                for e in range(WhackAMole.NUM_MASHES_ACROSS):
+                    the_label = self.mash_labels[i][e]
                     # Show the mash
                     the_label["image"] = self.mash_photo
-                    # Delete any timer that is associated with the mole
+                    # Delete any timer that is associated with the mash
                     the_label.after_cancel(self.label_timers[id(the_label)])
 
             self.game_is_running = False
@@ -157,7 +160,7 @@ class WhackAMole:
 
         if self.game_is_running:
             if timer_expired:
-                # The mole is going down before it was clicked on, so update the miss counter
+                # The mash is going down before it was clicked on, so update the miss counter
                 self.miss_counter["text"] = str(int(self.miss_counter["text"]) + 1)
             else:
                 # The timer did not expire, so manually stop the timer
@@ -169,7 +172,7 @@ class WhackAMole:
             # Set a call to pop up the mash in the future
             time_down = randint(WhackAMole.MIN_TIME_DOWN,
                                 WhackAMole.MAX_TIME_DOWN)
-            timer_object = the_label.after(time_down, self.pop_up_mole, the_label)
+            timer_object = the_label.after(time_down, self.pop_up_mash, the_label)
             # Remember the timer object so it can be canceled later, if need be
             self.label_timers[id(the_label)] = timer_object
 
@@ -188,10 +191,6 @@ class WhackAMole:
         really_quit = messagebox.askyesno("Quitting?", "Do you really want to quit?")
         if really_quit:
             self.window.destroy()
-
-    def quit(self):
-        print("quit button hit")
-
 
 if __name__ == "__main__":
     main()
