@@ -18,14 +18,16 @@ class WhackAMole:
         self.mash_photo = PhotoImage(file="mash.png")
         self.mash_buttons = self.create_mashes()
 
-        self.hit_counter, self.miss_counter, self.start_button = self.create_status_widgets()
+        self.hit_counter, self.miss_counter, self.start_button, self.quit_button = self.create_status_widgets()
+
+        self.set_callbacks()
 
     def create_frames(self):
         mash_frame = tk.Frame(self.window, bg="red")
         mash_frame.grid(row=1, column=1)
 
         status_frame = tk.Frame(self.window, bg=WhackAMole.STATUS_BACKGROUND)
-        status_frame.grid(row=1, column=2, sticky=tk.N + tk.S + tk.W + tk.W)
+        status_frame.grid(row=1, column=2, sticky=tk.E + tk.W + tk.N + tk.S)
 
         return mash_frame, status_frame
 
@@ -78,7 +80,27 @@ class WhackAMole:
         spacer = tk.Label(self.status_frame, text="", bg=WhackAMole.STATUS_BACKGROUND)
         spacer.pack(side="top", fill=tk.Y, expand=True)
 
-        return hit_counter, miss_counter, start_button
+        return hit_counter, miss_counter, start_button, quit_button
+
+        
+    def set_callbacks(self):
+        # Set the same callback for each mash button
+        for i in range(WhackAMole.NUM_MASHES_ACROSS):
+            for e in range(WhackAMole.NUM_MASHES_ACROSS):
+                self.mash_buttons[i][e]["command"] = self.mash_hit
+
+        self.start_button["command"] = self.start
+        self.quit_button["command"] = self.quit
+
+
+    def mash_hit(self):
+        print("mash button hit")
+
+    def start(self):
+        print("start button hit")
+
+    def quit(self):
+        print("quit button hit")
 
 
 if __name__ == "__main__":
